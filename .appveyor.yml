@@ -5,7 +5,7 @@ shallow_clone: true
 platform:
   - x64
 
-configuration:  
+configuration:
   - Release
 
 matrix:
@@ -18,21 +18,30 @@ only_commits:
     - .appveyor.yml
 
 install:
-  - cmd : vcpkg install boost-iostreams:x64-windows
-  - cmd : vcpkg install boost-asio:x64-windows
-  - cmd : vcpkg install boost-filesystem:x64-windows
-  - cmd : vcpkg install boost-system:x64-windows
-  - cmd : vcpkg install boost-variant:x64-windows
-  - cmd : vcpkg install boost-lockfree:x64-windows
-  - cmd : vcpkg install boost-uuid:x64-windows
-  - cmd : vcpkg install glew:x64-windows
-  - cmd : vcpkg install libvorbis:x64-windows
-  - cmd : vcpkg install libogg:x64-windows
-  - cmd : vcpkg install luajit:x64-windows
-  - cmd : vcpkg install openal-soft:x64-windows
-  - cmd : vcpkg install opengl:x64-windows
-  - cmd : vcpkg install physfs:x64-windows
-  - cmd : vcpkg install zlib:x64-windows  
+  - cd C:\Tools\vcpkg
+  - git pull
+  - .\bootstrap-vcpkg.bat
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+before_build:  |
+  vcpkg integrate install
+  copy /y mk\portfile.cmake C:\tools\vcpkg\ports\openal-soft\
+  vcpkg install boost-iostreams:x64-windows
+  vcpkg install boost-asio:x64-windows
+  vcpkg install boost-filesystem:x64-windows
+  vcpkg install boost-system:x64-windows
+  vcpkg install boost-variant:x64-windows
+  vcpkg install boost-lockfree:x64-windows
+  vcpkg install boost-uuid:x64-windows
+  vcpkg install glew:x64-windows
+  vcpkg install libvorbis:x64-windows
+  vcpkg install libogg:x64-windows
+  vcpkg install lua:x64-windows
+  vcpkg install luajit:x64-windows
+  vcpkg install openal-soft:x64-windows
+  vcpkg install opengl:x64-windows
+  vcpkg install physfs:x64-windows
+  vcpkg install zlib:x64-windows
 
 build:
   parallel: true
@@ -45,8 +54,8 @@ cache:
 
 after_build:
   - cmd: 7z a otclient.zip otclient.exe *.dll
-  
+
 artifacts:
   - path: otclient.exe
   - path: '*.dll'
-  - path: otclient.zip  
+  - path: otclient.zip
